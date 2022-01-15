@@ -8,13 +8,21 @@
 import UIKit
 import MobileCoreServices
 import UniformTypeIdentifiers
+import AVFoundation
+import Foundation
+import CoreImage
 
-class ViewController: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+class ViewController: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, AVCapturePhotoCaptureDelegate {
 
     @IBOutlet var imgView: UIImageView!
     let imagePicker: UIImagePickerController! = UIImagePickerController()
     var captureImage: UIImage!
+    var beginImage: CIImage!
     var flagImageSave = false
+    var isAutoCaptureEnabled = false
+    private let photoCaptureOutput = AVCapturePhotoOutput()
+    var context = CIContext(options: nil)
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,13 +77,46 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
                 UIImageWriteToSavedPhotosAlbum(captureImage, self, nil, nil)
             }
             
-            imgView.image = captureImage
+            //imgView.image = captureImage
+           makeRectangle()
             
         }
         
         self.dismiss(animated: true, completion: nil)
     }
     
+    func makeRectangle() {
+        beginImage = CIImage(image: captureImage!)!
+        var rect: CIRectangleFeature = CIRectangleFeature()
+        
+        if let detector = CIDetector(ofType: CIDetectorTypeRectangle, context: context, options: [CIDetectorAccuracy : CIDetectorAccuracyHigh]){
+            rect = detector.features(in: beginImage).first as! CIRectangleFeature
+        }
+        
+        let perspectiveCorrection = CIFilter(name: "CIPerspectiveCorrection")!
+        beginImage = CIImage(image: captureImage!)!
+        
+        perspectiveCorrection.setValue(CIVector(cgPoint: rect.topLeft), forKey: "inputTopLeft")
+        perspectiveCorrection.setValue(CIVector(cgPoint: rect.topRight), forKey: "inputTopRight")
+        perspectiveCorrection.setValue(CIVector(cgPoint: rect.bottomLeft), forKey: "inputBottomLeft")
+        perspectiveCorrection.setValue(CIVector(cgPoint: rect.bottomRight), forKey: "inputBottomRight")
+        perspectiveCorrection.setValue(beginImage, forKey: kCIInputImageKey)
+        
+        let resImage = perspectiveCorrection.outputImage!
+        let cgiimg = context.createCGImage(resImage, from: resImage.extent)
+        let croppedimg = UIImage(cgImage: cgiimg!, scale: captureImage.scale, orientation: captureImage.imageOrientation)
+        imgView.image = croppedimg
+        //performSegue(withIdentifier: "showPhoto", sender: croppedimg)
+        
+        }
+        
+        /*let finalImage = CIFilter(name: "CIColorControls", parameters: [kCIInputImageKey: outputImage, kCIInputBrightnessKey: NSNumber(value: 0.0), kCIInputSaturationKey: NSNumber(value: 0.0), kCIInputContrastKey: NSNumber(value: 1.14)])?.outputImage*/
+        
+        /*let filter = CIFilter(name: "CIColorControls", parameters: [kCIInputImageKey: outputImage as Any , kCIInputBrightnessKey: NSNumber(value: 0.0), kCIInputSaturationKey: NSNumber(value: 0.0), kCIInputContrastKey: NSNumber(value: 1.14)])*/
+        
+        //let filter = CIFilter(name: "CIColorControls")
+        
+    
+    
     
 }
-
