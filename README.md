@@ -18,3 +18,5 @@ Detector
 
  > 2. choose 를 누르면 끝!
 * * *
+
+![화면-기록-2022-01-15-오후-1 59 26](https://user-images.githubusercontent.com/80521474/149609938-0211fb67-14fb-449f-8cf6-cd8678c2d49b.gif)
