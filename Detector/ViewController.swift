@@ -11,6 +11,7 @@ import UniformTypeIdentifiers
 import AVFoundation
 import Foundation
 import CoreImage
+import Photos
 
 class ViewController: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, AVCapturePhotoCaptureDelegate {
 
@@ -30,6 +31,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     }
 
     @IBAction func btnGallery(_ sender: UIButton) {
+        checkAlbumPermission()
         if(UIImagePickerController.isSourceTypeAvailable(.photoLibrary)){
             flagImageSave = false
             imagePicker.delegate = self
@@ -44,6 +46,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     }
     
     @IBAction func btnCamera(_ sender: UIButton) {
+        checkCameraPermission()
         if(UIImagePickerController.isSourceTypeAvailable(.camera)){
             flagImageSave = true
             imagePicker.delegate = self
@@ -109,6 +112,36 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
         //performSegue(withIdentifier: "showPhoto", sender: croppedimg)
         
         }
+    
+    func checkCameraPermission() {
+        AVCaptureDevice.requestAccess(for: .video, completionHandler: {
+            (granted: Bool) in
+            if granted {
+                print("카메라 권한 허용")
+            }else {
+                print("카메라 권한 거부")
+            }
+        })
+    }
+    
+    func checkAlbumPermission(){
+        PHPhotoLibrary.requestAuthorization(
+            {
+                status in
+                switch status {
+                case .notDetermined:
+                    print("앨범 선택하지 않음")
+                case .restricted:
+                    print("앨범 선택하지 않음")
+                case .denied:
+                    print("앨범 권한 거부")
+                case .authorized:
+                    print("앨범 권한 허용")
+                default:
+                    break
+                }
+            })
+    }
         
         /*let finalImage = CIFilter(name: "CIColorControls", parameters: [kCIInputImageKey: outputImage, kCIInputBrightnessKey: NSNumber(value: 0.0), kCIInputSaturationKey: NSNumber(value: 0.0), kCIInputContrastKey: NSNumber(value: 1.14)])?.outputImage*/
         
