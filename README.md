@@ -19,4 +19,5 @@ Detector
  > 2. choose 를 누르면 끝!
 * * *
 
-![화면-기록-2022-01-15-오후-1 59 26](https://user-images.githubusercontent.com/80521474/149609938-0211fb67-14fb-449f-8cf6-cd8678c2d49b.gif)
+![화면_기록_2022-01-15_오후_1_59_26_AdobeCreativeCloudExpress](https://user-images.githubusercontent.com/80521474/149620672-a52fceac-ba59-4389-bf24-01926f4edb4c.gif)
+
